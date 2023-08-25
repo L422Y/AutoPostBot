@@ -1,0 +1,21 @@
+{
+  "name": "twitter-electron-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron -r ts-node/register main.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "electron": "^26.1.0",
+    "puppeteer": "^21.1.0"
+  },
+  "devDependencies": {
+    "electron-cli": "^0.2.8",
+    "ts-node": "^10.9.1"
+  }
+}
