@@ -1,5 +1,5 @@
 import axios from "axios"
-import * as cheerio from 'cheerio'
+import * as cheerio from "cheerio"
 import * as url from "url"
 
 
@@ -14,7 +14,7 @@ export const getRandomWikipediaArticle = async (categories: string[]) => {
     if (!article) {
         return null
     }
-    return article
+    return {body: article, url: articleURL, category: randomCategory, title: getArticleTitleFromURL(articleURL)}
 }
 
 export const getWikipediaArticleFromCategory = async (category: string) => {
@@ -80,9 +80,16 @@ export const getArticleFromURL = async (articleURL: string) => {
 
         const htmlContent = response.data.parse.text["*"]
         const $ = cheerio.load(htmlContent)
-        const body = $(".mw-parser-output").text()
 
-        return {title, body}
+        // get text all content from html, filter out unwanted elements, remove references
+        let body = $(".mw-parser-output")
+            .children("p,  h2, h3, h4, h5, h6, blockquote, pre")
+            .not("#See_also, #References, #External_links, #Further_reading, #Notes, .mw-empty-elt, .mw-editsection, .toc, .thumb, .tright, .infobox, .navbox, .vertical-navbox, .mw-jump-link, .mw-references-wrap, .mw-references-wrap, .mw-cite-backlink, .mw-editsection-bracket, .mw-editsection-divider, .mw-editsection-like, .mw-editsection-like")
+            .text()
+            .replace(/\[\d+\]/g, "")
+            .replace(/\[\w+\]/g, "")
+
+        return body
 
     } catch (error) {
         console.error(`Failed to get article body: ${error}`)

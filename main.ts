@@ -5,6 +5,8 @@ import * as fs from "fs"
 import { tweets } from "./tweets/hereticny"
 import { useMoveToClick } from "./composables/useMoveToClick"
 import { getMousePosition, useMouseHelper } from "./composables/useMouseHelper"
+import { getRandomWikipediaArticle } from "./composables/getWikipediaArticle"
+import { generateTweet } from "./composables/openai"
 
 dotenv.config()
 
@@ -12,6 +14,8 @@ const twitterUsername: string = process.env.TWITTER_USERNAME!
 const twitterPassword: string = process.env.TWITTER_PASSWORD!
 const sentTweetsFile: string = "sent-tweets.txt"
 const tweetsArray = Object.entries(tweets).map(([id, text]) => ( {id, text} ))
+const categories = process.env.WIKIPEDIA_CATEGORIES!.split(",")
+const randomArticleChance = process.env.RANDOM_ARTICLE_CHANCE ? parseFloat(process.env.RANDOM_ARTICLE_CHANCE) : 0.8
 
 let sentTweetIDs: Set<string> = new Set(fs.existsSync(sentTweetsFile) ? fs.readFileSync(sentTweetsFile, "utf-8").split("\n") : [])
 let win: BrowserWindow
@@ -19,11 +23,11 @@ let browser: Browser
 let winSession: Electron.Session
 let page: Page
 
-async function postTweet(tweet: { id: string, text: string }) {
+async function postTweet(tweet: string) {
 
     await page.waitForSelector(".public-DraftStyleDefault-block")
     await page.click("[data-testid='tweetTextarea_0RichTextInputContainer']")
-    await page.type("[data-testid='tweetTextarea_0RichTextInputContainer']", tweet.text)
+    await page.type("[data-testid='tweetTextarea_0RichTextInputContainer']", tweet)
 
     await new Promise(resolve => setTimeout(resolve, 1000))
 
@@ -40,8 +44,6 @@ async function postTweet(tweet: { id: string, text: string }) {
 
     await useMoveToClick(page, nextSiblingHandle?.asElement()!, start.x, start.y)
 
-    sentTweetIDs.add(tweet.id)
-    fs.appendFileSync(sentTweetsFile, tweet.id + "\n")
 }
 
 app.on("ready", initialize)
@@ -69,7 +71,7 @@ async function initialize() {
     // })
 
     browser = await puppeteer.launch({
-        headless: false,
+        headless: "new",
         userDataDir: "./user_data"
     })
 
@@ -77,64 +79,23 @@ async function initialize() {
     await useMouseHelper(page)
     await login()
     await sendTweet()
-    setInterval(async () => sendTweet, ( Math.random() * 60 + 60 ) * 60 * 1000) // Randomly between 1 and 2 hours
+    await nextTweet()
 }
 
-// //
-// // async function saveSession() {
-// //     try {
-// //         const cookies = await page.cookies()
-// //         fs.writeFileSync("cookies.json", JSON.stringify(cookies))
-// //     } catch (error) {
-// //         console.error("Failed to save cookies", error)
-// //     }
-// // }
-//
-//
-// async function loadSession() {
-//     try {
-//         const cookiesStr = fs.readFileSync("cookies.json", "utf8")
-//         const cookies = JSON.parse(cookiesStr)
-//         await Promise.all(
-//             cookies.map(async (cookie: any) => {
-//                 await page.setCookie(cookie)
-//             })
-//         )
-//         console.log("Loaded cookies:", await page.cookies("https://twitter.com"))
-//     } catch (error) {
-//         console.error("Failed to load cookies", error)
-//         // Handle error as needed
-//     }
-// }
-
-// async function saveCookies() {
-//     try {
-//         winSession = win.webContents.session
-//         const cookies = await winSession.cookies.get({})
-//         fs.writeFileSync("cookies.json", JSON.stringify(cookies))
-//     } catch (error) {
-//         console.error("Failed to save cookies", error)
-//     }
-// }
-// async function loadCookies() {
-//     const cookies = JSON.parse(fs.readFileSync("cookies.json", "utf8"))
-//     winSession = win.webContents.session
-//     for (const cookie of cookies) {
-//         await winSession.cookies.set(cookie)
-//     }
-// }
-
-// async function saveCookies() {
-//
-// }
-
+async function nextTweet() {
+    // Delay between 5 minutes and 2 hours
+    setTimeout(sendTweet, ( 1000 * 60 * 5 ) + ( Math.random() * ( 1000 * 60 * 60 ) * 5 ))
+}
 
 async function login() {
 
 
     // Set user agent and viewport to emulate real browser
     await page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36")
-    await page.setViewport({width: Math.floor(1366 + ( Math.random() * 100 )), height: Math.floor(768 + ( Math.random() * 100 ))})
+    await page.setViewport({
+        width: Math.floor(1366 + ( Math.random() * 100 )),
+        height: Math.floor(768 + ( Math.random() * 100 ))
+    })
 
     await page.goto("https://twitter.com/login")
 
@@ -165,10 +126,32 @@ async function humanType(selector: string, text: string, delay: number = 100) {
     }
 }
 
+
 async function sendTweet() {
-    const availableTweets = tweetsArray.filter(tweet => !sentTweetIDs.has(tweet.id))
-    if (availableTweets.length === 0) return
-    const tweetContent = availableTweets[Math.floor(Math.random() * availableTweets.length)]
-    await postTweet(tweetContent)
+    if (Math.random() > 0.8) {
+        const availableTweets = tweetsArray.filter(tweet => !sentTweetIDs.has(tweet.id))
+        if (availableTweets.length === 0) return
+        const tweetContent = availableTweets[Math.floor(Math.random() * availableTweets.length)]
+        console.log(`Pulled Tweet (${tweetContent.id}): ${tweetContent.text}`)
+        await postTweet(tweetContent.text)
+        sentTweetIDs.add(tweetContent.id)
+        fs.appendFileSync(sentTweetsFile, tweetContent.id + "\n")
+    } else {
+        getRandomWikipediaArticle(categories).then(async (article: any) => {
+            // get tweet for article using OpenAI
+            await generateTweet(article.body).then(async (tweet) => {
+                if (tweet) {
+                    // remove quotes from start and end of tweet
+                    tweet = tweet.replace(/^"(.+(?="$))"$/, "$1")
+                    console.log(`Generated Tweet: ${tweet}`)
+                    await postTweet(tweet)
+
+                } else {
+                    console.log("Failed to generate a tweet.")
+                }
+            })
+        })
+    }
+    console.log("Tweet sent.")
 }
 

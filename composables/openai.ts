@@ -1,19 +1,46 @@
 import axios from "axios"
-import * as dotenv from "dotenv"
+import { configDotenv } from "dotenv"
 
-dotenv.config()
+configDotenv()
+
+const apiKey = process.env.OPENAI_KEY
+let OPENAI_INITIAL_PROMPT = process.env.OPENAI_INITIAL_PROMPT
+
+if (OPENAI_INITIAL_PROMPT === undefined || OPENAI_INITIAL_PROMPT === null || OPENAI_INITIAL_PROMPT === "") {
+    OPENAI_INITIAL_PROMPT = `Generate a 200 character tweet like one of these:
+    
+    "New electronic waste from discarded gadgets makes up for 70% of all toxic waste. Let's consider recycling and upcycling our tech to create a healthier environment for us all."
+    "In the realm of technology, the first alarm clock could only ring at 4am! Created by Levi Hutchins in 1787, its sole purpose was to wake him for his pre-dawn job. Truly an early bird that transformed the way we start our days."
+    "The first computer mouse was made of wood! Created by Douglas Engelbart in 1964, it was a simple wooden shell with two metal wheels. It was later patented in 1970."
+    
+    Do not make it a question, avoid using or featuring gender or politics, do not use phrases like "Did you know". The simple tweet should include a single interesting fact about the following:`
+}
+
+const headers = {
+    "Authorization": `Bearer ${apiKey}`,
+    "Content-Type": "application/json",
+}
 
 export const generateTweet = async (content: string) => {
-    const model = "gpt-3.5-turbo"
+    const model = "gpt-4"
     const endpoint = `https://api.openai.com/v1/chat/completions`
-    const apiKey = process.env.OPENAI_KEY
-    const prompt = `Generate copy for a tweet (without a question) that includes an interesting fact about the following:\n\n${content}`
+
+
+
+    let prompt = `${OPENAI_INITIAL_PROMPT}\n\n${content}`
+
+    prompt = prompt.substring(0, 1024)
+
 
     try {
-        const response = await axios.post(endpoint, {
-            max_tokens: 280,
+        let response: any
+        let content: string
+
+        response = await axios.post(endpoint, {
             model,
-            temperature: 0.7,
+            temperature: 0.2,
+            max_tokens: 200,
+            top_p: 0.1,
             messages: [{
                 "role": "user",
                 "content": prompt
@@ -25,9 +52,30 @@ export const generateTweet = async (content: string) => {
             },
         })
 
-        // Extract and return the generated tweet
-        return response.data.choices[0].content.trim()
-    } catch (error) {
+
+        content = response.data.choices[0].message.content
+        if (content.length > 280) {
+            console.log('Shortening...')
+            response = await axios.post(endpoint, {
+                model,
+                messages: [{
+                    "role": "user",
+                    "content": `Condense this tweet: ${content}`
+                }]
+            }, {
+                headers: {
+                    "Authorization": `Bearer ${apiKey}`,
+                    "Content-Type": "application/json",
+                },
+            })
+
+            content = response.data.choices[0].message.content
+        }
+
+        return content
+
+    } catch
+        (error) {
         console.error(`Error generating tweet: ${error}`)
         if (error.response) {
             console.log(error.response.data)
@@ -37,6 +85,41 @@ export const generateTweet = async (content: string) => {
         return null
     }
 }
+
+export const generateImage = async (prompt: string) => {
+    const endpoint = `https://api.openai.com/v1/images/generations`
+
+    try {
+        const response = await axios.post(endpoint, {
+            prompt,
+            n: 1,
+            size: "1024x1024"
+        }, {
+            headers,
+        })
+
+        const data = response.data
+        console.log(JSON.stringify(data, null, 2))
+
+        const image = data.images[0]
+        // save image to file
+        // const imageBuffer = Buffer.from(image, "base64")
+        // fs.writeFileSync("image.png", imageBuffer)
+        console.log("Generated image:", image.data.url)
+        return image
+
+
+    } catch (error) {
+        console.error(`Error generating image: ${error}`)
+        if (error.response) {
+            console.log(error.response.data)
+            console.log(error.response.status)
+            console.log(error.response.headers)
+        }
+        return null
+    }
+}
+
 
 // Example usage
 // generateTweet("technology")
