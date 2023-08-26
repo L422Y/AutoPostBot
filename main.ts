@@ -74,7 +74,7 @@ async function initialize() {
     // })
 
     let puppeteerOpts: any = {
-        headless: "new",
+        headless: false,
         userDataDir: "./user_data"
     }
 
