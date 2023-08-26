@@ -35,10 +35,13 @@ async function postTweet(tweet: string) {
     const nextSiblingHandle = await elementHandle?.evaluateHandle(element => element.nextElementSibling)
     await nextSiblingHandle?.asElement()?.click()
 
-    await page.waitForSelector("[id*='typeaheadDropdownWrapped-']", {timeout: 1000}).then(async () => {
-        await page.keyboard.press("Escape")
-    }).catch(() => {
-    })
+    await page.waitForSelector("[id*='typeaheadDropdownWrapped-']", {timeout: 1000})
+        .then(async () => {
+            await page.keyboard.press("Escape")
+            console.log("Tweet sent.")
+        }).catch(() => {
+            console.log("Unable to send tweet.")
+        })
 
     const start = getMousePosition()
 
@@ -155,12 +158,12 @@ async function sendTweet() {
                     console.log(`Generated Tweet: ${tweet}`)
                     await postTweet(tweet)
 
+
                 } else {
                     console.log("Failed to generate a tweet.")
                 }
             })
         })
     }
-    console.log("Tweet sent.")
 }
 
