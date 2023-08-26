@@ -19,6 +19,7 @@ export const getRandomWikipediaArticle = async (categories: string[]) => {
 
 export const getWikipediaArticleFromCategory = async (category: string) => {
     try {
+
         // Make an API request to get a list of pages in the category
         const response = await axios.get("https://en.wikipedia.org/w/api.php", {
             params: {
@@ -33,7 +34,16 @@ export const getWikipediaArticleFromCategory = async (category: string) => {
         const pages = response.data.query.categorymembers
 
         // Filter out pages that are not articles (namespace 0 is for articles)
-        const articles = pages.filter((page: any) => page.ns === 0)
+        const articles = pages.filter((page: any) => page.ns === 0).filter((page: any) =>
+            !page.title.includes("List of")
+            && !page.title.includes("Index of")
+            && !page.title.includes("Template:")
+            && !page.title.includes("Category:")
+            && !page.title.includes("Portal:")
+            && !page.title.includes("File:")
+            && !page.title.includes("Help:")
+            && !page.title.includes("Outline of")
+        )
 
         if (articles.length === 0) {
             console.log("No articles found.")
@@ -54,6 +64,7 @@ export const getWikipediaArticleFromCategory = async (category: string) => {
 
     return null
 }
+
 export const getArticleTitleFromURL = (articleURL: string) => {
     const parsedURL = url.parse(articleURL)
     const title = decodeURIComponent(parsedURL.pathname?.split("/wiki/")[1] || "")
@@ -65,6 +76,7 @@ export const getArticleTitleFromURL = (articleURL: string) => {
 
     return title
 }
+
 export const getArticleFromURL = async (articleURL: string) => {
     const title = getArticleTitleFromURL(articleURL)
     try {
