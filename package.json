@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "electron -r ts-node/register main.ts"
+    "dev": "\electron -r ts-node/register main.ts",
+    "start": "xvfb-run electron -r ts-node/register main.ts"
   },
   "keywords": [],
   "author": "",
