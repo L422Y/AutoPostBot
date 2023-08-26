@@ -84,7 +84,41 @@ async function initialize() {
 
     let puppeteerOpts: any = {
         headless: false,
-        userDataDir: "./user_data"
+        userDataDir: "./user_data",
+        args: [
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-infobars",
+            "--single-process",
+            "--no-zygote",
+            "--no-first-run",
+            "--window-position=0,0",
+            "--ignore-certificate-errors",
+            "--ignore-certificate-errors-skip-list",
+            "--disable-dev-shm-usage",
+            "--disable-accelerated-2d-canvas",
+            "--disable-gpu",
+            "--hide-scrollbars",
+            "--disable-notifications",
+            "--disable-background-timer-throttling",
+            "--disable-backgrounding-occluded-windows",
+            "--disable-breakpad",
+            "--disable-component-extensions-with-background-pages",
+            "--disable-extensions",
+            "--disable-features=TranslateUI,BlinkGenPropertyTrees",
+            "--disable-ipc-flooding-protection",
+            "--disable-renderer-backgrounding",
+            "--enable-features=NetworkService,NetworkServiceInProcess",
+            "--force-color-profile=srgb",
+            "--metrics-recording-only",
+            "--mute-audio",
+            "--no-default-browser-check",
+            "--no-first-run",
+            "--disable-default-apps",
+            "--hide-crashed-bubbles",
+            "--hide-crashed-restore-bubble",
+            "--noerrdialogs",
+        ]
     }
 
     if (process.env.PUPPETEER_EXEC_PATH !== undefined) {
