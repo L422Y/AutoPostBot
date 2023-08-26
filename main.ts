@@ -65,33 +65,40 @@ process.on("SIGTERM", () => {
 
 
 async function initialize() {
-    // win = new BrowserWindow({
-    //     width: 800 + Math.random() * 200,
-    //     height: 600 + Math.random() * 200,
-    //     webPreferences: {
-    //         nodeIntegration: true
-    //     }
-    // })
+
 
     let puppeteerOpts: any = {
         headless: false,
         userDataDir: "./user_data"
     }
 
-    if (process.env.PUPPETEER_EXEC_PATH) {
+    if (process.env.PUPPETEER_EXEC_PATH !== undefined) {
         puppeteerOpts = {
             ...puppeteerOpts,
             executablePath: process.env.PUPPETEER_EXEC_PATH
         }
     }
 
-    browser = await puppeteer.launch(puppeteerOpts)
+    await puppeteer.launch(puppeteerOpts).catch(async (err: any) => {
+        console.log(err)
+        console.log("Failed to launch puppeteer. Exiting...")
+        await new Promise(resolve => setTimeout(resolve, 5000))
+        process.exit(1)
+    }).then(async (browser: any) => {
+        if (!browser) {
+            console.log("Failed to launch puppeteer. Exiting...")
+            await new Promise(resolve => setTimeout(resolve, 5000))
+            process.exit(1)
+        }
 
-    page = await browser.newPage()
-    await useMouseHelper(page)
-    await login()
-    await sendTweet()
-    await nextTweet()
+        page = await browser.newPage()
+        await useMouseHelper(page)
+        await login()
+        await sendTweet()
+        await nextTweet()
+    })
+
+
 }
 
 async function nextTweet() {
