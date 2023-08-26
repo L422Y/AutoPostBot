@@ -70,10 +70,19 @@ async function initialize() {
     //     }
     // })
 
-    browser = await puppeteer.launch({
+    let puppeteerOpts: any = {
         headless: "new",
         userDataDir: "./user_data"
-    })
+    }
+
+    if (process.env.PUPPETEER_EXEC_PATH) {
+        puppeteerOpts = {
+            ...puppeteerOpts,
+            executablePath: process.env.PUPPETEER_EXEC_PATH
+        }
+    }
+
+    browser = await puppeteer.launch(puppeteerOpts)
 
     page = await browser.newPage()
     await useMouseHelper(page)
