@@ -53,14 +53,17 @@ async function postTweet(tweet: string) {
     await page.waitForSelector("[id*='typeaheadDropdownWrapped-']", {timeout: 1000})
         .then(async () => {
             await page.keyboard.press("Escape")
-            console.log("Tweet sent.")
         }).catch(() => {
-            console.log("Unable to send tweet.")
         })
 
     const start = getMousePosition()
 
-    await useMoveToClick(page, nextSiblingHandle?.asElement()!, start.x, start.y)
+    await useMoveToClick(page, nextSiblingHandle?.asElement()!, start.x, start.y).catch(() => {
+        console.log("Unable to send tweet.")
+
+    }).then(async () => {
+        console.log("Tweet sent.")
+    })
 
 }
 
@@ -86,38 +89,11 @@ async function initialize() {
         headless: false,
         userDataDir: "./user_data",
         args: [
-            "--no-sandbox",
-            "--disable-setuid-sandbox",
-            "--disable-infobars",
-            "--single-process",
-            "--no-zygote",
-            "--no-first-run",
-            "--window-position=0,0",
-            "--ignore-certificate-errors",
-            "--ignore-certificate-errors-skip-list",
-            "--disable-dev-shm-usage",
-            "--disable-accelerated-2d-canvas",
-            "--disable-gpu",
-            "--hide-scrollbars",
-            "--disable-notifications",
-            "--disable-background-timer-throttling",
-            "--disable-backgrounding-occluded-windows",
-            "--disable-breakpad",
-            "--disable-component-extensions-with-background-pages",
-            "--disable-extensions",
-            "--disable-features=TranslateUI,BlinkGenPropertyTrees",
-            "--disable-ipc-flooding-protection",
-            "--disable-renderer-backgrounding",
-            "--enable-features=NetworkService,NetworkServiceInProcess",
-            "--force-color-profile=srgb",
-            "--metrics-recording-only",
-            "--mute-audio",
-            "--no-default-browser-check",
-            "--no-first-run",
-            "--disable-default-apps",
-            "--hide-crashed-bubbles",
-            "--hide-crashed-restore-bubble",
-            "--noerrdialogs",
+            "--disable-infobars", "--no-first-run", "--disable-notifications", "--disable-background-timer-throttling",
+            "--disable-backgrounding-occluded-windows", "--disable-breakpad", "--disable-component-extensions-with-background-pages",
+            "--disable-extensions", "--disable-features=TranslateUI,BlinkGenPropertyTrees", "--disable-ipc-flooding-protection",
+            "--disable-renderer-backgrounding", "--mute-audio", "--no-default-browser-check", "--no-first-run", "--hide-crashed-bubbles",
+            "--hide-crashed-restore-bubble", "--noerrdialogs", "--enable-automation", "--disable-blink-features=AutomationControlled",
         ]
     }
 
