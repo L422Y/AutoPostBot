@@ -7,6 +7,7 @@ import { useMoveToClick } from "./composables/useMoveToClick"
 import { getMousePosition, useMouseHelper } from "./composables/useMouseHelper"
 import { getRandomWikipediaArticle } from "./composables/getWikipediaArticle"
 import { generateTweet } from "./composables/openai"
+import * as path from "path"
 
 dotenv.config()
 
@@ -22,6 +23,20 @@ let win: BrowserWindow
 let browser: Browser
 let winSession: Electron.Session
 let page: Page
+
+async function deleteSingletonFiles() {
+    try {
+        const files = fs.readdirSync("./user_data/")
+        for (const file of files) {
+            if (file.match("Singleton")) {
+                const filePath = path.join("./user_data/", file)
+                console.log(`Removing ${filePath}...`)
+                fs.unlinkSync(filePath)
+            }
+        }
+    } catch (e) {
+    }
+}
 
 async function postTweet(tweet: string) {
 
@@ -65,7 +80,7 @@ process.on("SIGTERM", () => {
 
 
 async function initialize() {
-
+    await deleteSingletonFiles()
 
     let puppeteerOpts: any = {
         headless: false,
