@@ -92,6 +92,12 @@ async function initialize() {
         }
 
         page = await browser.newPage()
+
+        page.on("dialog", async dialog => {
+            console.log(dialog.message())
+            await dialog.dismiss()
+        })
+
         await useMouseHelper(page)
         await login()
         await sendTweet()
