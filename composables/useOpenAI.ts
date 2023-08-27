@@ -3,7 +3,6 @@ import { configDotenv } from "dotenv"
 
 configDotenv()
 
-const apiKey = process.env.OPENAI_KEY
 let OPENAI_INITIAL_PROMPT = process.env.OPENAI_INITIAL_PROMPT
 
 if (OPENAI_INITIAL_PROMPT === undefined || OPENAI_INITIAL_PROMPT === null || OPENAI_INITIAL_PROMPT === "") {
@@ -22,6 +21,13 @@ const headers = {
 }
 
 export const generateTweet = async (content: string) => {
+
+    const apiKey = process.env.OPENAI_KEY
+    if (apiKey === undefined || apiKey === null || apiKey === "") {
+        console.error("OpenAI API Key not found. Please add OPENAI_KEY to your .env to use this plugin.")
+        return null
+    }
+
     const model = "gpt-4"
     const endpoint = `https://api.openai.com/v1/chat/completions`
 
