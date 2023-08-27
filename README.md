@@ -69,7 +69,7 @@ xvfb-run electron -r ts-node/register main.ts
 
 3. Create a `.env` file in the root directory and set up the environment variables:
 
-   ```env
+```env
 TWITTER_USERNAME=username
 TWITTER_PASSWORD=pw
 
