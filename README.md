@@ -2,8 +2,13 @@
 
 ## Description
 
-This bot automates Twitter posts. It's capable of posting from a list of predefined tweets or generating new tweets
-using OpenAI. It's built on Electron, Puppeteer, and Node.js.
+This bot automates Twitter posts. It's capable of posting from a list of predefined tweets, generating new tweets
+using OpenAI and Wikipedia, and posting from an RSS feed. 
+
+Multiple plugins can be enabled, and each plugin has a chance of being used. For example, you can enable the `Wikipedia`
+plugin with a 80% chance of being used, and the `RSSFeed` plugin with a 20% chance of being used. 
+
+It's built on Electron, Puppeteer, and Node.js.
 
 ## Requirements
 
@@ -18,33 +23,33 @@ You will need to install chromium:
 brew install chromium
 ```
 
-and set the `PUPPETEER_EXEC_PATH` environment variable to the path of the chromium executable, on an M1 Mac this will be:
+and set the `PUPPETEER_EXEC_PATH` environment variable to the path of the chromium executable, on an M1 Mac this will
+be:
 
 ```bash
 PUPPETEER_EXEC_PATH="/opt/homebrew/bin/chromium"
 ```
 
-You will also need to install XQuartz:
-
-```bash
-
-## Running on Linux
+## Running on Linux (headless w/ Xvfb)
 
 You will need to install chromium:
 
 ```bash
 sudo apt install chromium-browser
 ``` 
+
 and set the `PUPPETEER_EXEC_PATH` environment variable to the path of the chromium executable:
 
 ```bash
 PUPPETEER_EXEC_PATH="/usr/bin/chromium-browser"
 ``` 
+
 You will also need to install Xvfb:
 
 ```bash
 sudo apt install xvfb
 ``` 
+
 and run the bot using the following command (this is already done in the `start` script in `package.json`):
 
 ```bash
@@ -82,6 +87,9 @@ xvfb-run electron -r ts-node/register main.ts
    Make them sound like they were written by a ninja turtle. Don't use @mentions, the tweets should be about the following:
    "
    
+   ENABLED_PLUGINS="FileBased:0.1,Wikipedia:0.9"
+   RSS_FEED_URL=https://website.com/feed/
+
    ```
 
 ## Running the Bot
@@ -106,17 +114,15 @@ You can control several aspects of the bot via environment variables in the `.en
 - `OPENAI_KEY`: API key for OpenAI.
 - `PUPPETEER_EXEC_PATH`: Path to Chromium executable.
 - `OPENAI_INITIAL_PROMPT`: Initial prompt for generating tweets via OpenAI.
+- `ENABLED_PLUGINS`: Comma separated list of plugins to enable, with their chance of being used. For example:
+  `Wikipedia:0.8,RSSFeed:0.2` will enable the `Wikipedia` plugin with a 80% chance of being used,
+  and the `RSSFeed` plugin with a 20% chance of being used. Options are `Wikipedia`, `RSSFeed`, or `FileBased`
+- `RSS_FEED_URL`: URL of the RSS feed to use with the `RSSFeed` plugin.
 
-### Random Wikipedia Articles
 
-The bot can tweet random Wikipedia articles. You can control the language and categories of the articles via the
-environment variables `WIKIPEDIA_LANG` and `WIKIPEDIA_CATEGORIES`. The bot will fetch a random article from the
-categories you specify, and then generate a tweet using OpenAI based on the initial prompt, the article's title and
-summary.
+### Plugin: FileBased
 
-### Predefined Tweets
-
-The bot can also tweet from a list of predefined tweets. You can add new tweets by adding a new JSON file to the
+Tweet from a list of predefined tweets. You can add new tweets by adding a new JSON file to the
 `tweets` directory. The JSON file should contain an object of the following format:
 
 ```json
@@ -130,3 +136,14 @@ The keys are used to reference the tweets in the bot's internal database. You ca
 single JSON file, and you can add as many JSON files as you like to the `tweets` directory. The bot will pick a random
 tweet from the database and tweet it. The bot will not tweet the same tweet twice, unless you delete
 the `sent-tweets.txt` file in the root directory.
+
+### Plugin: Wikipedia
+
+Tweet a random article from Wikipedia. You can control the language and categories of the articles via the environment.
+OpenAI will be used to generate a tweet based on the article's content.
+
+### Plugin: RSSFeed
+
+Tweet a random article from an RSS feed. You can control the URL of the RSS feed via the environment.
+Tweeted posts will be saved in the `sent-posts.txt` file in the root directory, so they will not be tweeted again.
+
