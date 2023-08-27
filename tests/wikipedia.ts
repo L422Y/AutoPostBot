@@ -1,18 +1,18 @@
 import * as dotenv from "dotenv"
 import { getRandomWikipediaArticle } from "@/composables/useWikipedia"
-import { generateImage, generateTweet } from "@/composables/useOpenAI"
+import { generateImage, generatePost } from "@/composables/useOpenAI"
 
 dotenv.config()
 
 const categories = process.env.WIKIPEDIA_CATEGORIES!.split(",")
 const article = getRandomWikipediaArticle(categories).then(async (article: any) => {
-    //get tweet for article using OpenAI
-    await generateTweet(article.body).then((tweet) => {
-        if (tweet) {
-            console.log(`Generated Tweet: ${tweet}`)
-            console.log(`Generated Tweet Length: ${tweet.length}`)
-            // generate image for tweet using OpenAI
-            // generateImage(tweet).then((image) => {
+    //get Post for article using OpenAI
+    await generatePost(article.body).then((Post) => {
+        if (Post) {
+            console.log(`Generated Post: ${Post}`)
+            console.log(`Generated Post Length: ${Post.length}`)
+            // generate image for Post using OpenAI
+            // generateImage(Post).then((image) => {
             //     if (image) {
             //         console.log(JSON.stringify(image, null, 2))
             //         console.log(`Generated Image: ${image}`)
@@ -21,7 +21,7 @@ const article = getRandomWikipediaArticle(categories).then(async (article: any) 
             //     }
             // })
         } else {
-            console.log("Failed to generate a tweet.")
+            console.log("Failed to generate a Post.")
         }
     })
 })

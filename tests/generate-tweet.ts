@@ -1,6 +1,6 @@
-import { generateTweet } from "@/composables/useOpenAI"
+import { generatePost } from "@/composables/useOpenAI"
 
-generateTweet("technology").then((tweet) => {
-  console.log(tweet)
-  console.log("Length:", tweet.length)
+generatePost("technology").then((Post) => {
+  console.log(Post)
+  console.log("Length:", Post.length)
 })

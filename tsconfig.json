@@ -1,9 +1,17 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "es6",
+    "baseUrl": "./",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "target": "esnext",
+    "outDir": "dist",
     "paths": {
         "@/*": ["./*"]
     }
   },
+  "include": [
+    "types/**/*",
+    "lib/**/*",
+    "plugins/**/*"
+  ]
 }
