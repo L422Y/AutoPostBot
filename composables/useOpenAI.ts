@@ -31,8 +31,6 @@ export const generatePost = async (content: string) => {
     const model = "gpt-4"
     const endpoint = `https://api.openai.com/v1/chat/completions`
 
-
-
     let prompt = `${OPENAI_INITIAL_PROMPT}\n\n${content}`
 
     prompt = prompt.substring(0, 1024)
@@ -93,51 +91,35 @@ export const generatePost = async (content: string) => {
 }
 
 export const generateImage = async (prompt: string) => {
-    const endpoint = `https://api.openai.com/v1/images/generations`
-
-    try {
-        const response = await axios.post(endpoint, {
-            prompt,
-            n: 1,
-            size: "1024x1024"
-        }, {
-            headers,
-        })
-
-        const data = response.data
-        console.log(JSON.stringify(data, null, 2))
-
-        const image = data.images[0]
-        // save image to file
-        // const imageBuffer = Buffer.from(image, "base64")
-        // fs.writeFileSync("image.png", imageBuffer)
-        console.log("Generated image:", image.data.url)
-        return image
-
-
-    } catch (error) {
-        console.error(`Error generating image: ${error}`)
-        if (error.response) {
-            console.log(error.response.data)
-            console.log(error.response.status)
-            console.log(error.response.headers)
-        }
-        return null
-    }
+    // const endpoint = `https://api.openai.com/v1/images/generations`
+    //
+    // try {
+    //     const response = await axios.post(endpoint, {
+    //         prompt,
+    //         n: 1,
+    //         size: "1024x1024"
+    //     }, {
+    //         headers,
+    //     })
+    //
+    //     const data = response.data
+    //     console.log(JSON.stringify(data, null, 2))
+    //
+    //     const image = data.images[0]
+    //     // save image to file
+    //     // const imageBuffer = Buffer.from(image, "base64")
+    //     // fs.writeFileSync("image.png", imageBuffer)
+    //     console.log("Generated image:", image.data.url)
+    //     return image
+    //
+    //
+    // } catch (error) {
+    //     console.error(`Error generating image: ${error}`)
+    //     if (error.response) {
+    //         console.log(error.response.data)
+    //         console.log(error.response.status)
+    //         console.log(error.response.headers)
+    //     }
+    //     return null
+    // }
 }
-
-
-// Example usage
-// generatePost("technology")
-//     .then((Post) => {
-//         if (Post) {
-//             console.log(JSON.stringify(Post, null, 2))
-//             console.log(`Generated Post: ${Post}`)
-//         } else {
-//             console.log("Failed to generate a Post.")
-//         }
-//     })
-//     .catch((error) => {
-//         console.error(`Error generating Post: ${error}`)
-//
-//     })
