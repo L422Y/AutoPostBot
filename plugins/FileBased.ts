@@ -2,9 +2,8 @@ import { BaseTweetPlugin } from "../lib/BaseTweetPlugin"
 import * as fs from "fs"
 import * as path from "path"
 
-const categories = process.env.WIKIPEDIA_CATEGORIES!.split(",")
-
 export class FileBased extends BaseTweetPlugin {
+    name = "FileBased"
     sentTweetsFile: string
     tweets: { [key: string]: string } = {}
     tweetsArray: { id: string, text: string }[]
@@ -23,7 +22,7 @@ export class FileBased extends BaseTweetPlugin {
         const availableTweets = this.tweetsArray.filter(tweet => !this.sentTweetIDs.has(tweet.id))
         if (availableTweets.length === 0) return
         const tweetContent = availableTweets[Math.floor(Math.random() * availableTweets.length)]
-        console.log(`Pulled Tweet (${tweetContent.id}): ${tweetContent.text}`)
+        this.log(`Pulled Tweet (${tweetContent.id}): ${tweetContent.text}`)
         this.lastTweet = tweetContent
         return tweetContent.text
     }
@@ -51,8 +50,9 @@ export class FileBased extends BaseTweetPlugin {
 
             this.sentTweetsFile = "sent-tweets.txt"
             this.tweetsArray = Object.entries(this.tweets).map(([id, text]) => ( {id, text} ))
-
         }
+
+        this.log(`Loaded ${this.tweetsArray.length} tweets from ${tweetFiles.length} files.`)
 
         this.sentTweetIDs = new Set(fs.existsSync(this.sentTweetsFile) ? fs.readFileSync(this.sentTweetsFile, "utf-8").split("\n") : [])
 
