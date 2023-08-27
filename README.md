@@ -70,9 +70,20 @@ xvfb-run electron -r ts-node/register main.ts
 3. Create a `.env` file in the root directory and set up the environment variables:
 
 ```env
+
+ENABLED_DESTINATIONS="TwitterAPIv2"
+ENABLED_GENERATORS="FileBased:0.1,Wikipedia:0.9"
+
+# Only if you are using the RSS plugin
+RSS_FEED_URL=https://website.com/feed/
+
+# Only if you are using the Puppeteer plugin
 TWITTER_USERNAME=username
 TWITTER_PASSWORD=pw
+PUPPETEER_EXEC_PATH="/opt/homebrew/bin/chromium"
+#PUPPETEER_EXEC_PATH="/usr/bin/chromium-browser" // on linux
 
+# Only if you are using the TwitterAPIv2 plugin
 TWITTER_APP_KEY=__TWITTER_APP_KEY__
 TWITTER_APP_SECRET=__TWITTER_APP_SECRET__
 TWITTER_ACCESS_TOKEN=__TWITTER_ACCESS_TOKEN__
@@ -81,13 +92,10 @@ TWITTER_ACCESS_TOKEN_SECRET=__TWITTER_ACCESS_TOKEN_SECRET__
 POST_MIN_DELAY_HOURS=0.5
 POST_MAX_DELAY_HOURS=5
 
+# Only if you are using the Wikipedia plugin
 WIKIPEDIA_LANG=en
 WIKIPEDIA_CATEGORIES="Technology,Science,Philosophy,Mythology,Mathematics,Music,Computing,Engineering,Communication,Education,Weather,Energy,Materials,Chemistry,Physics,Biology,Earth,Space,Universe"
 OPENAI_KEY=sk-eoirgheorihgoiwerhgoiehwrgoihwreoghj
-
-PUPPETEER_EXEC_PATH="/opt/homebrew/bin/chromium"
-#PUPPETEER_EXEC_PATH="/usr/bin/chromium-browser" // on linux
-
 OPENAI_INITIAL_PROMPT="Generate a 200 character Post like one of these:
 
 `New electronic waste from discarded gadgets makes up for 70% of all toxic waste. Let's consider recycling and upcycling our tech to create a healthier environment for us all.`
@@ -96,10 +104,7 @@ OPENAI_INITIAL_PROMPT="Generate a 200 character Post like one of these:
 
 Do not make it a question, avoid using or featuring gender or politics, do not use phrases like `Did you know`. The simple Post should include a single interesting fact about the following:"
 
-RSS_FEED_URL=https://website.com/feed/
 
-ENABLED_DESTINATIONS="TwitterAPIv2"
-ENABLED_GENERATORS="FileBased:0.1,Wikipedia:0.9"
 ```
 
 ## Running the Bot
