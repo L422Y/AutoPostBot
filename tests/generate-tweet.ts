@@ -1,4 +1,4 @@
-import { generateTweet } from "../composables/openai"
+import { generateTweet } from "@/composables/useOpenAI"
 
 generateTweet("technology").then((tweet) => {
   console.log(tweet)

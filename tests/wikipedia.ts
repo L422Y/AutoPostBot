@@ -1,6 +1,6 @@
 import * as dotenv from "dotenv"
-import { getRandomWikipediaArticle } from "../composables/getWikipediaArticle"
-import { generateImage, generateTweet } from "../composables/openai"
+import { getRandomWikipediaArticle } from "@/composables/useWikipedia"
+import { generateImage, generateTweet } from "@/composables/useOpenAI"
 
 dotenv.config()
 
