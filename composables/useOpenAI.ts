@@ -6,23 +6,23 @@ configDotenv()
 let OPENAI_INITIAL_PROMPT = process.env.OPENAI_INITIAL_PROMPT
 
 if (OPENAI_INITIAL_PROMPT === undefined || OPENAI_INITIAL_PROMPT === null || OPENAI_INITIAL_PROMPT === "") {
-    OPENAI_INITIAL_PROMPT = `Generate a 200 character tweet like one of these:
+    OPENAI_INITIAL_PROMPT = `Generate a 200 character Post like one of these:
     
     "New electronic waste from discarded gadgets makes up for 70% of all toxic waste. Let's consider recycling and upcycling our tech to create a healthier environment for us all."
     "In the realm of technology, the first alarm clock could only ring at 4am! Created by Levi Hutchins in 1787, its sole purpose was to wake him for his pre-dawn job. Truly an early bird that transformed the way we start our days."
     "The first computer mouse was made of wood! Created by Douglas Engelbart in 1964, it was a simple wooden shell with two metal wheels. It was later patented in 1970."
     
-    Do not make it a question, avoid using or featuring gender or politics, do not use phrases like "Did you know". The simple tweet should include a single interesting fact about the following:`
+    Do not make it a question, avoid using or featuring gender or politics, do not use phrases like "Did you know". The simple Post should include a single interesting fact about the following:`
 }
+const apiKey = process.env.OPENAI_KEY
 
 const headers = {
     "Authorization": `Bearer ${apiKey}`,
     "Content-Type": "application/json",
 }
 
-export const generateTweet = async (content: string) => {
+export const generatePost = async (content: string) => {
 
-    const apiKey = process.env.OPENAI_KEY
     if (apiKey === undefined || apiKey === null || apiKey === "") {
         console.error("OpenAI API Key not found. Please add OPENAI_KEY to your .env to use this plugin.")
         return null
@@ -66,7 +66,7 @@ export const generateTweet = async (content: string) => {
                 model,
                 messages: [{
                     "role": "user",
-                    "content": `Condense this tweet: ${content}`
+                    "content": `Condense this Post: ${content}`
                 }]
             }, {
                 headers: {
@@ -82,7 +82,7 @@ export const generateTweet = async (content: string) => {
 
     } catch
         (error) {
-        console.error(`Error generating tweet: ${error}`)
+        console.error(`Error generating Post: ${error}`)
         if (error.response) {
             console.log(error.response.data)
             console.log(error.response.status)
@@ -128,16 +128,16 @@ export const generateImage = async (prompt: string) => {
 
 
 // Example usage
-// generateTweet("technology")
-//     .then((tweet) => {
-//         if (tweet) {
-//             console.log(JSON.stringify(tweet, null, 2))
-//             console.log(`Generated Tweet: ${tweet}`)
+// generatePost("technology")
+//     .then((Post) => {
+//         if (Post) {
+//             console.log(JSON.stringify(Post, null, 2))
+//             console.log(`Generated Post: ${Post}`)
 //         } else {
-//             console.log("Failed to generate a tweet.")
+//             console.log("Failed to generate a Post.")
 //         }
 //     })
 //     .catch((error) => {
-//         console.error(`Error generating tweet: ${error}`)
+//         console.error(`Error generating Post: ${error}`)
 //
 //     })
