@@ -1,34 +1,21 @@
-# Auto Post Bot
+# AutoPostBot
+AutoPostBot is a highly configurable automated posting bot. It pulls content from various sources (configurable) and sends posts to multiple platforms (also configurable).
 
-## Description
+### Features
+* Highly extensible via generator and destination plugins.
+* Customizable post frequency.
+* Configuration via environment variables.
+* Logging for debug and monitoring.
 
-This bot automates social media posts. It's capable of posting from a list of predefined Posts, generating new Posts
-using OpenAI and Wikipedia, and posting from an RSS feed. 
-
-
-It's built on Electron, Puppeteer, and Node.js.
-
-Currently, instead of the Twitter API, it uses Puppeteer to automate the Twitter website. This means that it can be used
-with any Twitter account, and it can be used to post Posts with images (once that is implemented). It also means that
-it's not limited by the Twitter API rate limits or fees. This is against Twitter's terms of service, so use at your own
-risk.
-
-It moves the mouse around randomly to avoid detection by Twitter's bot detection system. It also uses a random delay
-between Posts to avoid detection. The delay is configurable via environment variables.
-
-Multiple plugins can be enabled, and each plugin has a chance of being used. For example, you can enable the `Wikipedia`
-plugin with a 80% chance of being used, and the `RSSFeed` plugin with a 20% chance of being used.
-
-TODO: posting images, and possibly videos.
-TODO: add support for posting from other sources, such as Reddit, and possibly
-other social media platforms.
-TODO: add support for using the Twitter API instead of Puppeteer.
-TODO: add support for posting to other social media platforms, such as Facebook, Instagram, etc.
 
 ## Requirements
 
 - Node.js
 - pnpm, yarn or npm
+- Xvfb/Chromium/Electron if you want to run the bot with puppeteered destinations
+- OpenAI API key if you want to use the Wikipedia plugin
+- Twitter API keys (with read and write access) if you want to use the TwitterAPIv2 plugin
+
 
 ## Running on macOS/dev mode
 

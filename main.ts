@@ -9,4 +9,8 @@ process.on("SIGTERM", () => {
 })
 
 const bot = new AutoPostBot()
-app.on("ready", bot.initialize.bind(bot))
+if (app) {
+    app.on("ready", bot.initialize.bind(bot))
+} else {
+    bot.initialize.bind(bot)()
+}

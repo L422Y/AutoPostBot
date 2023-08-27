@@ -1,7 +1,7 @@
 import { IDestinationPlugin } from "../types/IDestinationPlugin"
 
 export class BaseDestinationPlugin implements IDestinationPlugin {
-    name: string = "BasePostPlugin"
+    name: string = "BaseDestinationPlugin"
 
     constructor(options?: any) {
         this.log(`...Initialized`)

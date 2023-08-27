@@ -2,7 +2,7 @@ import { IGeneratorPlugin } from "../types/IGeneratorPlugin"
 
 export class BaseGeneratorPlugin implements IGeneratorPlugin {
     chance: number = 0.5
-    name: string = "BasePostPlugin"
+    name: string = "BaseGeneratorPlugin"
 
     constructor(options?: any) {
         if (options?.chance) {
