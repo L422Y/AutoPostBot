@@ -1,4 +1,4 @@
-# Twitter Post Bot
+# Twitter Automatic Post Bot
 
 ## Description
 

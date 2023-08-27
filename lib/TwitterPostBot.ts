@@ -5,24 +5,20 @@ import * as fs from "fs"
 import * as path from "path"
 import { useMoveToClick } from "../composables/useMoveToClick"
 import { getMousePosition, useMouseHelper } from "../composables/useMouseHelper"
-import { getRandomWikipediaArticle } from "../composables/useWikipedia"
-import { generateTweet } from "../composables/useOpenAI"
+import { BaseTweetPlugin } from "@/lib/BaseTweetPlugin"
 
 dotenv.config()
 
 export class TwitterPostBot {
     twitterUsername: string
     twitterPassword: string
-    sentTweetsFile: string
-    tweetsArray: { id: string, text: string }[]
-    categories: string[]
     randomArticleChance: number
     tweetMaxDelayInHours: number = 5
     tweetMinDelayInHours: number = 0.5
-    sentTweetIDs: Set<string>
     browser?: Browser
     page?: Page
-    tweets: { [key: string]: string } = {}
+    enabledPlugins: any[] = []
+    plugins: BaseTweetPlugin[] = []
 
     constructor() {
         this.twitterUsername = process.env.TWITTER_USERNAME!
@@ -30,9 +26,6 @@ export class TwitterPostBot {
         this.tweetMaxDelayInHours = process.env.TWEET_MAX_DELAY_HOURS ? parseFloat(process.env.TWEET_MAX_DELAY_HOURS) : 0.5
         this.tweetMinDelayInHours = process.env.TWEET_MIN_DELAY_HOURS ? parseFloat(process.env.TWEET_MIN_DELAY_HOURS) : 0.5
 
-        this.loadTweets()
-
-        this.categories = process.env.WIKIPEDIA_CATEGORIES!.split(",")
         this.randomArticleChance = process.env.RANDOM_ARTICLE_CHANCE ? parseFloat(process.env.RANDOM_ARTICLE_CHANCE) : 0.8
 
         this.deleteSingletonFiles = this.deleteSingletonFiles.bind(this)
@@ -49,30 +42,8 @@ export class TwitterPostBot {
         })
     }
 
-    loadTweets() {
-        // load all tweets from tweets folder
-        const tweetFiles = fs.readdirSync("./tweets/", "utf-8")
-        for (const tweetFile of tweetFiles) {
-            if (!tweetFile.match(/\.json$/)) continue
-            const tweetFileData = fs.readFileSync(path.join("./tweets/", tweetFile), "utf-8")
-            const tweetFileJSON = JSON.parse(tweetFileData)
-
-            Object.entries(tweetFileJSON).forEach(([id, text]) => {
-                const key = `${tweetFile.replace(/\.json$/, "")}-${id}`
-                this.tweets[key] = text as string
-            })
-
-            this.sentTweetsFile = "sent-tweets.txt"
-            this.tweetsArray = Object.entries(this.tweets).map(([id, text]) => ( {id, text} ))
-
-        }
-
-        this.sentTweetIDs = new Set(fs.existsSync(this.sentTweetsFile) ? fs.readFileSync(this.sentTweetsFile, "utf-8").split("\n") : [])
-
-    }
-
-
     async deleteSingletonFiles() {
+        // delete singleton files in case of crash
         try {
             const files = fs.readdirSync("@/user_data/")
             for (const file of files) {
@@ -85,7 +56,6 @@ export class TwitterPostBot {
         } catch (e) {
         }
     }
-
 
     async postTweet(tweet: string) {
 
@@ -113,7 +83,6 @@ export class TwitterPostBot {
             console.log("Tweet sent.")
         })
     }
-
 
     async initialize() {
         await this.deleteSingletonFiles()
@@ -163,9 +132,19 @@ export class TwitterPostBot {
         })
     }
 
+    async loadPlugins() {
+        const pluginsWithChance = process.env.ENABLED_PLUGINS!.split(",")
+        for (const pluginWithChance of pluginsWithChance) {
+            const [plugin, chance] = pluginWithChance.split(":")
+            const pluginClass = require(`../plugins/${plugin}`).default
+            const pluginInstance = new pluginClass({chance: parseFloat(chance)})
+            this.enabledPlugins.push(plugin)
+            this.plugins.push(pluginInstance)
+        }
+
+    }
 
     async nextTweet() {
-
         setTimeout(this.sendTweet, ( 1000 * 60 * 60 * this.tweetMinDelayInHours ) + ( Math.random() * ( 1000 * 60 * 60 ) * this.tweetMaxDelayInHours ))
     }
 
@@ -207,32 +186,31 @@ export class TwitterPostBot {
 
 
     async sendTweet() {
-        // roll for random tweet from tweet list, or random wikipedia article
-        if (Math.random() > this.randomArticleChance) {
-            // get random tweet
-            const availableTweets = this.tweetsArray.filter(tweet => !this.sentTweetIDs.has(tweet.id))
-            if (availableTweets.length === 0) return
-            const tweetContent = availableTweets[Math.floor(Math.random() * availableTweets.length)]
-            console.log(`Pulled Tweet (${tweetContent.id}): ${tweetContent.text}`)
-            await this.postTweet(tweetContent.text)
-            this.sentTweetIDs.add(tweetContent.id)
-            // write sent tweet to file
-            fs.appendFileSync(this.sentTweetsFile, tweetContent.id + "\n")
+        let plugin: BaseTweetPlugin | undefined
+
+        if (!this.plugins.length) {
+            console.log("No plugins enabled.")
+            return
+        }
+
+        // pick random plugin based on plugin chance
+        while (!plugin) {
+            plugin = this.plugins[Math.floor(Math.random() * this.plugins.length)]
+            if (Math.random() > plugin.chance) {
+                plugin = undefined
+            }
+        }
+
+        console.log(`Rolled plugin: ${plugin.constructor.name}`)
+
+        const tweet = await plugin.generateTweet()
+        if (!tweet) {
+            console.log("No tweet generated.")
+            return
         } else {
-            // get random wikipedia article
-            getRandomWikipediaArticle(this.categories).then(async (article: any) => {
-                // get tweet for article using OpenAI
-                await generateTweet(article.body).then(async (tweet) => {
-                    if (tweet) {
-                        // remove quotes from start and end of tweet
-                        tweet = tweet.replace(/^"(.+(?="$))"$/, "$1")
-                        console.log(`Generated Tweet: ${tweet}`)
-                        await this.postTweet(tweet)
-                    } else {
-                        console.log("Failed to generate a tweet.")
-                    }
-                })
-            })
+            console.log(`Generated tweet: ${tweet}`)
+            await this.postTweet(tweet)
+            await plugin.confirmTweetSent()
         }
     }
 }
