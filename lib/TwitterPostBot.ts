@@ -32,7 +32,7 @@ export class TwitterPostBot {
         this.initialize = this.initialize.bind(this)
         this.login = this.login.bind(this)
         this.sendTweet = this.sendTweet.bind(this)
-        this.nextTweet = this.nextTweet.bind(this)
+
 
         process.on("exit", async () => {
             if (this.browser) {
@@ -87,6 +87,19 @@ export class TwitterPostBot {
     async initialize() {
         await this.deleteSingletonFiles()
 
+        await this.loadPlugins()
+        if (!this.plugins.length) {
+            console.log("No plugins enabled. Exiting...")
+            await new Promise(resolve => setTimeout(resolve, 5000))
+            process.exit(1)
+        }
+
+        if (!this.twitterUsername || !this.twitterPassword) {
+            console.log("Twitter username or password not set. Exiting...")
+            await new Promise(resolve => setTimeout(resolve, 5000))
+            process.exit(1)
+        }
+
         let puppeteerOpts: any = {
             headless: false,
             userDataDir: "./user_data",
@@ -109,16 +122,24 @@ export class TwitterPostBot {
         await puppeteer.launch(puppeteerOpts).catch(async (err: any) => {
             console.log(err)
             console.log("Failed to launch puppeteer. Exiting...")
-            await new Promise(resolve => setTimeout(resolve, 5000))
+            await new Promise(resolve => setTimeout(resolve, 1000))
             process.exit(1)
         }).then(async (browser: any) => {
             if (!browser) {
                 console.log("Failed to launch puppeteer. Exiting...")
-                await new Promise(resolve => setTimeout(resolve, 5000))
+                await new Promise(resolve => setTimeout(resolve, 1000))
                 process.exit(1)
             }
             this.browser = browser
             this.page = await browser.newPage()
+
+
+            this.browser.on("disconnected", async () => {
+                console.log("Browser disconnected. Exiting...")
+                await new Promise(resolve => setTimeout(resolve, 1000))
+                process.exit()
+
+            })
 
             this.page.on("dialog", async dialog => {
                 console.log(dialog.message())
@@ -136,7 +157,14 @@ export class TwitterPostBot {
         const pluginsWithChance = process.env.ENABLED_PLUGINS!.split(",")
         for (const pluginWithChance of pluginsWithChance) {
             const [plugin, chance] = pluginWithChance.split(":")
-            const pluginClass = require(`../plugins/${plugin}`).default
+            const pluginClass = await import(`../plugins/${plugin}.js`)
+                .then(m => m[plugin]).catch((err) => {
+                    console.log(`Failed to load plugin: ${plugin}`)
+                    console.log(err)
+                    return undefined
+                })
+
+
             const pluginInstance = new pluginClass({chance: parseFloat(chance)})
             this.enabledPlugins.push(plugin)
             this.plugins.push(pluginInstance)

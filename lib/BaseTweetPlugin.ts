@@ -1,5 +1,6 @@
 export class BaseTweetPlugin {
     chance: number = 0.5
+    name: string = "BaseTweetPlugin"
 
     constructor(options?: any) {
         if (options?.chance) {
@@ -15,4 +16,7 @@ export class BaseTweetPlugin {
         return Promise.resolve(undefined)
     }
 
+    log(...args: any[]) {
+        console.log(`[${this.name}]`, ...args)
+    }
 }

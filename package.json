@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build-plugins": "tsc plugins/*.ts --outDir plugins",
     "dev": "electron -r ts-node/register main.ts",
     "start": "xvfb-run electron -r ts-node/register main.ts"
   },
@@ -15,7 +16,8 @@
     "cheerio": "1.0.0-rc.12",
     "dotenv": "^16.3.1",
     "electron": "^26.1.0",
-    "puppeteer": "^21.1.0"
+    "puppeteer": "^21.1.0",
+    "rss-parser": "^3.13.0"
   },
   "devDependencies": {
     "electron-cli": "^0.2.8",

@@ -142,6 +142,7 @@ dist
 cookies.json
 user_data
 sent-tweets.txt
+sent-posts.txt
 pnpm-lock.yaml
 package-lock.json
 tweets/*.json
