@@ -3,10 +3,17 @@
 ## Description
 
 This bot automates Twitter posts. It's capable of posting from a list of predefined tweets, generating new tweets
-using OpenAI and Wikipedia, and posting from an RSS feed. 
+using OpenAI and Wikipedia, and posting from an RSS feed.
+
+Instead of the Twitter API, it uses Puppeteer to automate the Twitter website. This means that it can be used with any
+Twitter account, and it can be used to post tweets with images (once that is implemented). It also means that it's not
+limited by the Twitter API rate limits or fees.
+
+It moves the mouse around randomly to avoid detection by Twitter's bot detection system. It also uses a random delay
+between tweets to avoid detection. The delay is configurable via environment variables.
 
 Multiple plugins can be enabled, and each plugin has a chance of being used. For example, you can enable the `Wikipedia`
-plugin with a 80% chance of being used, and the `RSSFeed` plugin with a 20% chance of being used. 
+plugin with a 80% chance of being used, and the `RSSFeed` plugin with a 20% chance of being used.
 
 It's built on Electron, Puppeteer, and Node.js.
 
@@ -118,7 +125,6 @@ You can control several aspects of the bot via environment variables in the `.en
   `Wikipedia:0.8,RSSFeed:0.2` will enable the `Wikipedia` plugin with a 80% chance of being used,
   and the `RSSFeed` plugin with a 20% chance of being used. Options are `Wikipedia`, `RSSFeed`, or `FileBased`
 - `RSS_FEED_URL`: URL of the RSS feed to use with the `RSSFeed` plugin.
-
 
 ### Plugin: FileBased
 
