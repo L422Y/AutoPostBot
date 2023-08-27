@@ -1,4 +1,4 @@
-import { TwitterPostBot } from "@/lib/TwitterPostBot"
+import { TwitterPostBot } from "./lib/TwitterPostBot"
 import { app } from "electron"
 
 process.on("SIGINT", () => {
@@ -9,4 +9,4 @@ process.on("SIGTERM", () => {
 })
 
 const bot = new TwitterPostBot()
-app.on("ready", bot.initialize)
+app.on("ready", bot.initialize.bind(bot))

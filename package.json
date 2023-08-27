@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "rm -rf user_data/SingletonLock; electron -r ts-node/register main.ts",
+    "dev": "electron -r ts-node/register main.ts",
     "start": "xvfb-run electron -r ts-node/register main.ts"
   },
   "keywords": [],

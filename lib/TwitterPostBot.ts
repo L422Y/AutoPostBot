@@ -3,10 +3,10 @@ import puppeteer, { Browser, Page } from "puppeteer"
 import * as dotenv from "dotenv"
 import * as fs from "fs"
 import * as path from "path"
-import { useMoveToClick } from "@/composables/useMoveToClick"
-import { getMousePosition, useMouseHelper } from "@/composables/useMouseHelper"
-import { getRandomWikipediaArticle } from "@/composables/useWikipedia"
-import { generateTweet } from "@/composables/useOpenAI"
+import { useMoveToClick } from "../composables/useMoveToClick"
+import { getMousePosition, useMouseHelper } from "../composables/useMouseHelper"
+import { getRandomWikipediaArticle } from "../composables/useWikipedia"
+import { generateTweet } from "../composables/useOpenAI"
 
 dotenv.config()
 
@@ -35,6 +35,12 @@ export class TwitterPostBot {
         this.categories = process.env.WIKIPEDIA_CATEGORIES!.split(",")
         this.randomArticleChance = process.env.RANDOM_ARTICLE_CHANCE ? parseFloat(process.env.RANDOM_ARTICLE_CHANCE) : 0.8
 
+        this.deleteSingletonFiles = this.deleteSingletonFiles.bind(this)
+        this.initialize = this.initialize.bind(this)
+        this.login = this.login.bind(this)
+        this.sendTweet = this.sendTweet.bind(this)
+        this.nextTweet = this.nextTweet.bind(this)
+
         process.on("exit", async () => {
             if (this.browser) {
                 await this.browser.close()
@@ -45,14 +51,17 @@ export class TwitterPostBot {
 
     loadTweets() {
         // load all tweets from tweets folder
-        const tweetFiles = fs.readdirSync("@/tweets/", "utf-8")
+        const tweetFiles = fs.readdirSync("./tweets/", "utf-8")
         for (const tweetFile of tweetFiles) {
             if (!tweetFile.match(/\.json$/)) continue
-            const tweetFileData = fs.readFileSync(path.join("@/tweets/", tweetFile), "utf-8")
+            const tweetFileData = fs.readFileSync(path.join("./tweets/", tweetFile), "utf-8")
             const tweetFileJSON = JSON.parse(tweetFileData)
-            for (const tweet of tweetFileJSON) {
-                this.tweets[`${tweetFile.replace(".json", "")}-${tweet.id}`] = tweet.text
-            }
+
+            Object.entries(tweetFileJSON).forEach(([id, text]) => {
+                const key = `${tweetFile.replace(/\.json$/, "")}-${id}`
+                this.tweets[key] = text as string
+            })
+
             this.sentTweetsFile = "sent-tweets.txt"
             this.tweetsArray = Object.entries(this.tweets).map(([id, text]) => ( {id, text} ))
 
