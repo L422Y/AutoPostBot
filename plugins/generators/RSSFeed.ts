@@ -1,25 +1,24 @@
-import { BaseTweetPlugin } from "../lib/BaseTweetPlugin"
+import { BaseGeneratorPlugin } from "../../lib/BaseGeneratorPlugin"
 import * as fs from "fs"
-import * as RSSParser from "rss-parser"
+import Parser from "rss-parser"
 
-
-export class RSSFeed extends BaseTweetPlugin {
+export class RSSFeed extends BaseGeneratorPlugin {
     name = "RSSFeed"
-    parser: RSSParser = new RSSParser()
+    parser: Parser = new Parser()
     sentPostsFile: string = "sent-posts.txt"
     sentPostIds: Set<string>
-    lastTweet: { title: string, link: string, guid: string }
+    lastPost: { title: string, link: string, guid: string }
     feedURL: string = process.env.RSS_FEED_URL!
     feedPosts: any[]
 
     constructor() {
         super()
         this.sentPostIds = new Set(fs.existsSync(this.sentPostsFile) ? fs.readFileSync(this.sentPostsFile, "utf-8").split("\n") : [])
-        this.generateTweet = this.generateTweet.bind(this)
+        this.generatePost = this.generatePost.bind(this)
         this.refreshPosts = this.refreshPosts.bind(this)
     }
 
-    async generateTweet(): Promise<string | void> {
+    async generatePost(): Promise<string | void> {
         await this.refreshPosts()
         const availablePosts = this.feedPosts.filter(post => !this.sentPostIds.has(post.guid))
         if (availablePosts.length === 0) {
@@ -28,16 +27,16 @@ export class RSSFeed extends BaseTweetPlugin {
         }
         const postContent = availablePosts[Math.floor(Math.random() * availablePosts.length)]
         this.log(`Pulled Post (${postContent.guid}): ${postContent.title}`)
-        this.lastTweet = postContent
+        this.lastPost = postContent
         return `${postContent.title}\n${postContent.link}`
     }
 
-    async confirmTweetSent() {
-        if (!this.lastTweet) return
-        this.sentPostIds.add(this.lastTweet.guid)
-        // write sent tweet to file
-        fs.appendFileSync(this.sentPostsFile, this.lastTweet.guid + "\n")
-        this.lastTweet = undefined
+    async confirmPostSent() {
+        if (!this.lastPost) return
+        this.sentPostIds.add(this.lastPost.guid)
+        // write sent Post to file
+        fs.appendFileSync(this.sentPostsFile, this.lastPost.guid + "\n")
+        this.lastPost = undefined
     }
 
     async refreshPosts() {
