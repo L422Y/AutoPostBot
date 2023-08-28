@@ -1,7 +1,7 @@
 import * as dotenv from "dotenv"
 
-import { BaseGeneratorPlugin } from "../lib/BaseGeneratorPlugin"
-import { BaseDestinationPlugin } from "../lib/BaseDestinationPlugin"
+import { BaseGeneratorPlugin } from "@/lib/BaseGeneratorPlugin"
+import { BaseDestinationPlugin } from "@/lib/BaseDestinationPlugin"
 
 dotenv.config()
 
@@ -10,6 +10,7 @@ export class AutoPostBot {
     randomArticleChance: number
     postMaxDelayInHours: number = 5
     postMinDelayInHours: number = 0.5
+    initialDelayInSeconds: number = 1
 
     private enabledGeneratorPlugins: string[] = []
     private generatorPlugins: BaseGeneratorPlugin[] = []
@@ -20,6 +21,7 @@ export class AutoPostBot {
     constructor() {
         this.postMaxDelayInHours = process.env.POST_MAX_DELAY_HOURS ? parseFloat(process.env.POST_MAX_DELAY_HOURS) : 0.5
         this.postMinDelayInHours = process.env.POST_MIN_DELAY_HOURS ? parseFloat(process.env.POST_MIN_DELAY_HOURS) : 0.5
+        this.initialDelayInSeconds = process.env.INITIAL_DELAY_SECONDS ? parseFloat(process.env.INITIAL_DELAY_SECONDS) : 0
 
         this.initialize = this.initialize.bind(this)
         this.sendPost = this.sendPost.bind(this)
@@ -45,7 +47,17 @@ export class AutoPostBot {
             await new Promise(resolve => setTimeout(resolve, 5000))
             process.exit(1)
         }
-        this.log("Starting...")
+        if (this.initialDelayInSeconds > 0) {
+            process.stdout.write(`🤖 Starting in ${this.initialDelayInSeconds} seconds`)
+            // Pause for initial delay, show indicator every second, clear line before writing next indicator
+            for (let i = 0; i < this.initialDelayInSeconds; i++) {
+                process.stdout.write(`.`)
+                await new Promise(resolve => setTimeout(resolve, 1000))
+            }
+            console.log("")
+        } else {
+            this.log(`Starting...`)
+        }
         await this.sendPost()
     }
 
