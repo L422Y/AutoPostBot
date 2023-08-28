@@ -145,6 +145,5 @@ sent-Posts.txt
 sent-posts.txt
 pnpm-lock.yaml
 package-lock.json
-Posts/*.json
-```
-
+posts/*.json
+conf/
