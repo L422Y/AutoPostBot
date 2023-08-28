@@ -11,9 +11,9 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "dev": "electron -r ts-node/register main.ts",
+    "dev": "electron -r tsconfig-paths/register -r ts-node/register main.ts",
     "start-electron": "xvfb-run electron -r ts-node/register main.ts",
-    "start": "ts-node  main.ts"
+    "start": "ts-node -r tsconfig-paths/register  main.ts"
   },
   "keywords": [],
   "author": "",
@@ -24,7 +24,6 @@
     "dotenv": "^16.3.1",
     "electron": "^26.1.0",
     "oauth": "^0.10.0",
-    "oauth-1.0a": "^2.2.6",
     "puppeteer": "^21.1.0",
     "rss-parser": "^3.13.0",
     "twitter-api-v2": "^1.15.1"
@@ -32,6 +31,7 @@
   "devDependencies": {
     "@types/oauth": "^0.9.1",
     "electron-cli": "^0.2.8",
-    "ts-node": "^10.9.1"
+    "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.2.0"
   }
 }
