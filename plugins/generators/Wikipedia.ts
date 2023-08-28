@@ -1,11 +1,17 @@
-import { getRandomWikipediaArticle } from "../../composables/useWikipedia"
-import { generatePost } from "../../composables/useOpenAI"
-import { BaseGeneratorPlugin } from "../../lib/BaseGeneratorPlugin"
+import { getRandomWikipediaArticle } from "@/composables/useWikipedia"
+import { generatePost } from "@/composables/useOpenAI"
+import { BaseGeneratorPlugin } from "@/lib/BaseGeneratorPlugin"
 
 const categories = process.env.WIKIPEDIA_CATEGORIES!.split(",")
 
 export class Wikipedia extends BaseGeneratorPlugin {
     name = "Wikipedia"
+
+    constructor() {
+        super()
+        this.generatePost = this.generatePost.bind(this)
+        this.ready()
+    }
 
     async generatePost(): Promise<string | void> {
         return await getRandomWikipediaArticle(categories).then(async (article: any) => {

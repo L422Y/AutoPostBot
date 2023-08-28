@@ -1,4 +1,4 @@
-import { BaseDestinationPlugin } from "../../lib/BaseDestinationPlugin"
+import { BaseDestinationPlugin } from "@/lib/BaseDestinationPlugin"
 import * as dotenv from "dotenv"
 import Twitter from 'twitter-api-v2'
 
@@ -39,7 +39,7 @@ export class TwitterAPIv2 extends BaseDestinationPlugin {
         })
 
         this.sendPost = this.sendPost.bind(this)
-
+        this.ready()
     }
 
 

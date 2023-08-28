@@ -1,12 +1,12 @@
 import { getMousePosition, useMouseHelper } from "@/composables/useMouseHelper"
-import { useMoveToClick } from "../../composables/useMoveToClick"
+import { useMoveToClick } from "@/composables/useMoveToClick"
 import puppeteer, { Browser, Page } from "puppeteer"
 import * as fs from "fs"
 import * as path from "path"
 import { app } from "electron"
-import { BaseDestinationPlugin } from "../../lib/BaseDestinationPlugin"
+import { BaseDestinationPlugin } from "@/lib/BaseDestinationPlugin"
 
-import { useRandomDelay } from "../../composables/useRandomDelay"
+import { useRandomDelay } from "@/composables/useRandomDelay"
 
 export class TwitterPuppeteer extends BaseDestinationPlugin {
 

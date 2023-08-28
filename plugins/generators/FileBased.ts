@@ -1,4 +1,4 @@
-import { BaseGeneratorPlugin } from "../../lib/BaseGeneratorPlugin"
+import { BaseGeneratorPlugin } from "@/lib/BaseGeneratorPlugin"
 import * as fs from "fs"
 import * as path from "path"
 
@@ -14,8 +14,8 @@ export class FileBased extends BaseGeneratorPlugin {
         super()
         this.generatePost = this.generatePost.bind(this)
         this.loadPosts = this.loadPosts.bind(this)
-
         this.loadPosts()
+        this.ready()
     }
 
     async generatePost(): Promise<string | void> {

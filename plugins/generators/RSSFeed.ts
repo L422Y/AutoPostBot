@@ -1,4 +1,4 @@
-import { BaseGeneratorPlugin } from "../../lib/BaseGeneratorPlugin"
+import { BaseGeneratorPlugin } from "@/lib/BaseGeneratorPlugin"
 import * as fs from "fs"
 import Parser from "rss-parser"
 
@@ -16,6 +16,8 @@ export class RSSFeed extends BaseGeneratorPlugin {
         this.sentPostIds = new Set(fs.existsSync(this.sentPostsFile) ? fs.readFileSync(this.sentPostsFile, "utf-8").split("\n") : [])
         this.generatePost = this.generatePost.bind(this)
         this.refreshPosts = this.refreshPosts.bind(this)
+        this.ready()
+
     }
 
     async generatePost(): Promise<string | void> {
