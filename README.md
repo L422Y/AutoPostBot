@@ -24,7 +24,7 @@
 
 ## 📍 Overview
 
-The AutoPostBot project is designed to automate the process of generating and posting content to different social media platforms. It achieves this by providing a framework for integrating generator and destination plugins. Generator plugins handle the generation of content, while destination plugins handle posting to specific platforms. The project's value proposition lies in its ability to streamline the content creation and posting process, saving time and effort for social media managers and individuals looking to automate their content strategy.
+AutoPostBot is designed to automate the process of generating and posting content to different social media platforms. It achieves this by providing a framework for integrating generator and destination plugins. Generator plugins handle the generation of content, while destination plugins handle posting to specific platforms. The project's value proposition lies in its ability to streamline the content creation and posting process, saving time and effort for social media managers and individuals looking to automate their content strategy.
 
 ---
 
