@@ -7,7 +7,8 @@
 
 ### 🩹 Fixes
 
-- Remove .txt extension from LICENSE.txt ([83d7b87](https://github.com/L422Y/AutoPostBot/commit/83d7b87))
+- Remove .txt extension from LICENSE.txt ([e38affd](https://github.com/L422Y/AutoPostBot/commit/e38affd))
+- Creative Commons License Badage ([1a58e70](https://github.com/L422Y/AutoPostBot/commit/1a58e70))
 
 ### 🏡 Chore
 
@@ -18,4 +19,3 @@
 ### ❤️ Contributors
 
 - Larry W ([@L422Y](http://github.com/L422Y))
-

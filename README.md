@@ -17,7 +17,7 @@
 <img src="https://img.shields.io/github/languages/top/l422y/AutoPostBot?style&color=5D6D7E" alt="GitHub top language" />
 <img src="https://img.shields.io/github/languages/code-size/l422y/AutoPostBot?style&color=5D6D7E" alt="GitHub code size in bytes" />
 <img src="https://img.shields.io/github/commit-activity/m/l422y/AutoPostBot?style&color=5D6D7E" alt="GitHub commit activity" />
-<img src="https://img.shields.io/github/license/l422y/AutoPostBot?style&color=5D6D7E" alt="GitHub license" />
+<img src="https://img.shields.io/badge/license-CC_BY--NC_4.0-blue" alt="GitHub license" />
 </div>
 
 
