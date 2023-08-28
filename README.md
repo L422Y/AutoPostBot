@@ -319,6 +319,10 @@ Post content to Twitter using the Twitter API v2. You will need to set up a Twit
 
 Post content to Twitter using Puppeteer. This plugin will open a browser window and log in to Twitter using your username and password. It will then Post the content and close the browser window. This plugin is not recommended for use in production, as it is not very reliable and may be detected by Twitter as a bot. Use at your own risk.
 
+## 📝 Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for more information.
+
 ## 🤝 Contributing
 Contributions are always welcome! Please follow these steps:
 1. Fork the project repository. This creates a copy of the project on your account that you can modify without affecting the original project.
