@@ -8,6 +8,7 @@
 ### 🏡 Chore
 
 - Separate electron and ts-node start scripts ([55062fc](https://github.com/L422Y/AutoPostBot/commit/55062fc))
+- Add CHANGELOG ([1d64293](https://github.com/L422Y/AutoPostBot/commit/1d64293))
 
 ### ❤️ Contributors
 
