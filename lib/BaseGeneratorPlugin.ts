@@ -1,4 +1,4 @@
-import { IGeneratorPlugin } from "../types/IGeneratorPlugin"
+import { IGeneratorPlugin } from "@/types/IGeneratorPlugin"
 
 export class BaseGeneratorPlugin implements IGeneratorPlugin {
     chance: number = 0.5
@@ -8,7 +8,10 @@ export class BaseGeneratorPlugin implements IGeneratorPlugin {
         if (options?.chance) {
             this.chance = options.chance
         }
-        this.log(`...Initialized with chance: ${this.chance}`)
+    }
+
+    ready():void {
+        this.log(`Ready... ${this.chance * 100}% chance`)
     }
 
     async generatePost(): Promise<string | void> {
@@ -20,6 +23,6 @@ export class BaseGeneratorPlugin implements IGeneratorPlugin {
     }
 
     log(...args: any[]): void {
-        console.log(`[${this.name}]`, ...args)
+        console.log(`👷 ${this.name} >`, ...args)
     }
 }

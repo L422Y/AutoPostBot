@@ -1,14 +1,18 @@
-import { IDestinationPlugin } from "../types/IDestinationPlugin"
+import { IDestinationPlugin } from "@/types/IDestinationPlugin"
 
 export class BaseDestinationPlugin implements IDestinationPlugin {
     name: string = "BaseDestinationPlugin"
 
     constructor(options?: any) {
-        this.log(`...Initialized`)
+
     }
 
     async initialize(): Promise<void> {
         return Promise.resolve(undefined)
+    }
+
+    ready():void {
+        this.log(`Ready...`)
     }
 
     async sendPost(postContent: string): Promise<void> {
@@ -20,7 +24,7 @@ export class BaseDestinationPlugin implements IDestinationPlugin {
     }
 
     log(...args: any[]): void {
-        console.log(`[${this.name}]`, ...args)
+        console.log(`📡 ${this.name} >`, ...args)
     }
 
 }
