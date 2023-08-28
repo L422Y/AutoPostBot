@@ -1,13 +1,24 @@
 {
   "name": "auto-post-bot",
-  "version": "1.0.0",
-  "licenses": [
+  "version": "1.2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/L422Y/AutoPostBot.git"
+  },
+  "bugs": {
+    "url": "https://github.com/L422Y/AutoPostBot/issues"
+  },
+  "homepage": "https://github.com/L422Y/AutoPostBot#readme",
+  "description": "AutoPostBot is designed to automate the process of generating and posting content to different social media platforms. It achieves this by providing a framework for integrating generator and destination plugins. Generator plugins handle the generation of content, while destination plugins handle posting to specific platforms. The project's value proposition lies in its ability to streamline the content creation and posting process, saving time and effort for social media managers and individuals looking to automate their content strategy.",
+  "main": "main.ts",
+  "contributors": [
     {
-      "type": "MIT"
+      "name": "Larry Williamson",
+      "email": "l422y@l422y.com",
+      "url": "https://l422y.com/",
+      "username": "l422y"
     }
   ],
-  "description": "",
-  "main": "index.js",
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
@@ -17,21 +28,28 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "CC BY-NC 4.0",
   "dependencies": {
     "axios": "^1.4.0",
     "cheerio": "1.0.0-rc.12",
     "dotenv": "^16.3.1",
-    "electron": "^26.1.0",
     "oauth": "^0.10.0",
-    "puppeteer": "^21.1.0",
     "rss-parser": "^3.13.0",
     "twitter-api-v2": "^1.15.1"
   },
   "devDependencies": {
+    "typescript": "^5.2.2",
     "@types/oauth": "^0.9.1",
     "electron-cli": "^0.2.8",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0"
+  },
+  "optionalDependencies": {
+    "electron": "^26.1.0",
+    "puppeteer": "^21.1.0"
+  },
+  "engines": {
+    "node": ">=18.16.0",
+    "ts-node": ">=10.9.1"
   }
 }
