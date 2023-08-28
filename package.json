@@ -1,6 +1,11 @@
 {
   "name": "auto-post-bot",
   "version": "1.0.0",
+  "licenses": [
+    {
+      "type": "MIT"
+    }
+  ],
   "description": "",
   "main": "index.js",
   "scripts": {

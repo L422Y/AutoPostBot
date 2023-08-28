@@ -317,3 +317,17 @@ git push origin new-feature-branch
    The project maintainers will review your changes and provide feedback or merge them into the main branch.
 
 ---
+## 📜 License
+
+This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0).
+
+### Key Points
+
+- **Attribution**: You must give appropriate credit, provide a link to the license, and indicate if changes were made.
+- **NonCommercial**: You may not use the material for commercial purposes.
+
+For more details, refer to the [`LICENSE`](./LICENSE) file in this repository, or check the [Creative Commons CC BY-NC 4.0 page](https://creativecommons.org/licenses/by-nc/4.0/).
+
+### Commercial Use
+
+For commercial licensing options, please contact the author.
