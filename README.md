@@ -351,7 +351,7 @@ This project is licensed under the Creative Commons Attribution-NonCommercial 4.
 - **Attribution**: You must give appropriate credit, provide a link to the license, and indicate if changes were made.
 - **NonCommercial**: You may not use the material for commercial purposes.
 
-For more details, refer to the [`LICENSE`](./LICENSE.txt) file in this repository, or check the [Creative Commons CC BY-NC 4.0 page](https://creativecommons.org/licenses/by-nc/4.0/).
+For more details, refer to the [`LICENSE`](./LICENSE) file in this repository, or check the [Creative Commons CC BY-NC 4.0 page](https://creativecommons.org/licenses/by-nc/4.0/).
 
 ### Commercial Use
 
